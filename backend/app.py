@@ -1,63 +1,86 @@
-print("APP.PY IS RUNNING")
-
 from flask import Flask, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-students = []
-current_id = 1
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///students.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Get all students
-@app.route('/students', methods=['GET'])
+db = SQLAlchemy(app)
+
+
+class Student(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    course = db.Column(db.String(100))
+
+
+@app.route("/students", methods=["GET"])
 def get_students():
-    return jsonify(students)
+    students = Student.query.all()
 
-# Get student by ID
-@app.route('/students/<int:id>', methods=['GET'])
-def get_student(id):
-    student = next((s for s in students if s["id"] == id), None)
-    return jsonify(student) if student else ("Not Found", 404)
-
-# Add a new student
-@app.route('/students', methods=['POST'])
-def add_student():
-    global current_id
-    data = request.json
-
-    student = {
-        "id": current_id,
-        "name": data["name"],
-        "age": data["age"]
-    }
-
-    students.append(student)
-    current_id += 1
-
-    return jsonify(student), 201
-
-# Update a student
-@app.route('/students/<int:id>', methods=['PUT'])
-def update_student(id):
-    data = request.json
+    result = []
 
     for student in students:
-        if student["id"] == id:
-            student["name"] = data["name"]
-            student["age"] = data["age"]
-            return jsonify(student)
+        result.append({
+            "id": student.id,
+            "name": student.name,
+            "course": student.course
+        })
 
-    return ("Not Found", 404)
+    return jsonify(result)
 
-# Delete a student
-@app.route('/students/<int:id>', methods=['DELETE'])
-def delete_student(id):
-    global students
-    students = [s for s in students if s["id"] != id]
-    return ("Deleted", 200)
+
+@app.route("/students", methods=["POST"])
+def add_student():
+    data = request.json
+
+    new_student = Student(
+        name=data["name"],
+        course=data["course"]
+    )
+
+    db.session.add(new_student)
+    db.session.commit()
+
+    return jsonify({"message": "Student added"})
+
 
 if __name__ == "__main__":
-    print("Starting Flask server...")
+    with app.app_context():
+        db.create_all()
+
     app.run(debug=True)
 
+#UPDATE Route (Edit Student)
+
+@app.route("/students/<int:id>", methods=["PUT"])
+def update_student(id):
+    student = Student.query.get(id)
+
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    data = request.json
+
+    student.name = data["name"]
+    student.course = data["course"]
+
+    db.session.commit()
+
+    return jsonify({"message": "Student updated"})
+
+#DELETE Route (Delete Student)
+@app.route("/students/<int:id>", methods=["DELETE"])
+def delete_student(id):
+    student = Student.query.get(id)
+
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    db.session.delete(student)
+    db.session.commit()
+
+    return jsonify({"message": "Student deleted"})
