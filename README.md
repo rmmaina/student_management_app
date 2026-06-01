@@ -3,6 +3,7 @@ Student Management System
 A full-stack student management application built with React and Flask that allows users to create, manage, update, and delete student records through a responsive web interface.
 ________________________________________
 Features
+
 •	Create student records
 •	View all students
 •	Update existing student information
@@ -13,6 +14,7 @@ Features
 •	Frontend and backend integration
 ________________________________________
 Tech Stack
+
 Frontend
 •	React
 •	Vite
@@ -42,18 +44,21 @@ student-management-app/
 └── README.md
 ________________________________________
 Installation
+
 1. Clone the Repository
 git clone <repository-url>
 Move into the project folder:
 cd student-management-app
 ________________________________________
 Backend Setup
+
 Navigate to the backend directory:
 cd backend
 Create a virtual environment:
 python -m venv venv
 Activate the virtual environment:
 Windows (Git Bash)
+
 source venv/Scripts/activate
 Install backend dependencies:
 pip install -r requirements.txt
@@ -63,6 +68,7 @@ The backend server will run on:
 http://127.0.0.1:5000
 ________________________________________
 Frontend Setup
+
 Open a new terminal and navigate to the frontend directory:
 cd frontend
 Install frontend dependencies:
@@ -72,7 +78,10 @@ npm run dev
 The frontend application will run on:
 http://localhost:5173
 ________________________________________
+
+
 API Endpoints
+
 Method	Endpoint	Description
 GET	/students	Retrieve all students
 POST	/students	Create a new student
@@ -80,12 +89,14 @@ PUT	/students/:id	Update student information
 DELETE	/students/:id	Delete a student
 ________________________________________
 Application Workflow
+
 1.	Users enter student information through the React frontend.
 2.	Axios sends API requests to the Flask backend.
 3.	Flask processes requests and interacts with the SQLite database.
 4.	Updated data is returned and displayed in the frontend interface.
 ________________________________________
 CRUD Functionality
+
 Create
 Add new student records to the database.
 Read
@@ -96,6 +107,7 @@ Delete
 Remove student records permanently.
 ________________________________________
 Future Improvements
+
 •	User authentication
 •	Search and filter functionality
 •	Responsive UI styling
@@ -104,5 +116,6 @@ Future Improvements
 •	Deployment to cloud platforms
 ________________________________________
 Author
+
 Robert Maina
 ________________________________________
